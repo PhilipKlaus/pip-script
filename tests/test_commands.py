@@ -1,7 +1,7 @@
 from typing import List
 
-from src.pipscript.commands import Command
 import src.pipscript as pip
+from src.pipscript.commands import Command
 
 
 def assert_command_contains_args(cmd: Command, args: List[str]):

@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from email.parser import BytesParser
 from typing import List, Optional
 
-from src.pipscript._executor import run_cmd
 from src.pipscript.commands import Command
 
 
@@ -32,17 +31,13 @@ class _PackageInfo:
 class ShowCmd(Command):
 
     def __init__(self, pkt: str):
-        self._args = ["pip", "show", pkt]
-
-    def __str__(self):
-        return " ".join(self._args)
+        super().__init__(["show", pkt])
 
     def files(self):
         self._args.append("--files")
         return self
 
-    def run(self):
-        output = run_cmd(str(self))
+    def _process_output(self, output: bytes):
         parser = BytesParser().parsebytes(output)
         fields = {"Name": "name",
                   "Version": "version",
@@ -66,6 +61,3 @@ class ShowCmd(Command):
         # ToDo: apply appropriate 'Files' parsing
 
         return _PackageInfo(**init_data)
-
-    def args(self):
-        return self._args

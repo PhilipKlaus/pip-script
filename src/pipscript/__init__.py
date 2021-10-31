@@ -1,4 +1,3 @@
-
 def list():
     from src.pipscript.commands.list import ListCmd
     return ListCmd()

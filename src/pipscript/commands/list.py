@@ -2,7 +2,6 @@ import json
 from dataclasses import dataclass
 from typing import List, Optional
 
-from src.pipscript._executor import run_cmd
 from src.pipscript.commands import Command
 
 
@@ -20,14 +19,15 @@ class _Package:
 
 
 class ListCmd(Command):
+
     def __init__(self):
-        self._args = ["pip", "list", "--format=json"]
+        super().__init__(["list", "--format=json"])
 
-    def __str__(self):
-        return " ".join(self._args)
-
-    def args(self):
-        return self._args
+    def _process_output(self, output: bytes):
+        pkgs = []
+        for entry in json.loads(output):
+            pkgs.append(_Package(**entry))
+        return pkgs
 
     def outdated(self):
         self._args.append("--outdated")
@@ -72,9 +72,3 @@ class ListCmd(Command):
     def exclude(self, pkgs: List[str]):
         [self._args.append(f"--exclude {pkg}") for pkg in pkgs]
         return self
-
-    def run(self) -> List[_Package]:
-        pkgs = []
-        for entry in json.loads(run_cmd(str(self))):
-            pkgs.append(_Package(**entry))
-        return pkgs
