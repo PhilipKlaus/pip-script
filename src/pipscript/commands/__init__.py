@@ -14,8 +14,11 @@ class Command:
     def args(self) -> List[str]:
         return self._args
 
-    def run(self):
+    def _run(self):
         return run_cmd(str(self), self._process_output)
 
     def _process_output(self, output: bytes):
+        raise NotImplementedError()
+
+    def run(self):
         raise NotImplementedError()

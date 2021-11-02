@@ -1,12 +1,14 @@
 import json
 from dataclasses import dataclass
+from json import JSONDecodeError
 from typing import List, Optional
 
 from src.pipscript.commands import Command
+from src.pipscript.errors import PipMalformedOutputError, PipUnexpectedError
 
 
 @dataclass
-class _Package:
+class PackageListInfo:
     """
     The package information gathered by the 'pip list' command.
     """
@@ -23,11 +25,20 @@ class ListCmd(Command):
     def __init__(self):
         super().__init__(["list", "--format=json"])
 
+    def run(self) -> PackageListInfo:
+        return self._run()
+
     def _process_output(self, output: bytes):
-        pkgs = []
-        for entry in json.loads(output):
-            pkgs.append(_Package(**entry))
-        return pkgs
+        try:
+            pkgs = []
+            for entry in json.loads(output):
+                pkgs.append(PackageListInfo(**entry))
+            return pkgs
+
+        except (TypeError, JSONDecodeError) as e:
+            raise PipMalformedOutputError("Error parsing 'pip list' output. Check installed pip version.") from e
+        except Exception as e:
+            raise PipUnexpectedError("An unexpected error occurred while parsing 'list' output.") from e
 
     def outdated(self):
         self._args.append("--outdated")

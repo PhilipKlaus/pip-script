@@ -3,12 +3,13 @@ from email.parser import BytesParser
 from typing import List, Optional
 
 from src.pipscript.commands import Command
+from src.pipscript.errors import PipMalformedOutputError, PipUnexpectedError
 
 
 @dataclass
-class _PackageInfo:
+class PackageShowInfo:
     """
-    PacketInfo gathered by the 'pip show' command
+    Package info gathered by the 'pip show' command
     Source: https://github.com/pypa/pip/blob/main/src/pip/_internal/commands/show.py
     """
     name: str
@@ -21,11 +22,11 @@ class _PackageInfo:
     author: str
     author_email: str
     license: str
-    files: Optional[List[str]] = None
     installer: str = None  # Gathered if '--verbose' specified
     metadata_version: str = None  # Gathered if '--verbose' specified
     classifiers: List[str] = None  # Gathered if '--verbose' specified
     entry_points: List[str] = None  # Gathered if '--verbose' specified
+    files: Optional[List[str]] = None
 
 
 class ShowCmd(Command):
@@ -37,27 +38,42 @@ class ShowCmd(Command):
         self._args.append("--files")
         return self
 
-    def _process_output(self, output: bytes):
-        parser = BytesParser().parsebytes(output)
-        fields = {"Name": "name",
-                  "Version": "version",
-                  "Location": "location",
-                  "Requires": "requires",
-                  "Required-by": "required_by",
-                  "Installer": "installer",
-                  "Metadata-Version": "metadata_version",
-                  "Classifiers": "classifiers",
-                  "Summary": "summary",
-                  "Home-page": "homepage",
-                  "Author": "author",
-                  "Author-email": "author_email",
-                  "License": "license",
-                  "Entry-points": "entry_points",
-                  "Files": "files"}
-        init_data = {}
-        for key in parser.keys():
-            init_data[fields[key]] = parser.get(key)
+    def run(self) -> PackageShowInfo:
+        return self._run()
 
-        # ToDo: apply appropriate 'Files' parsing
+    def _process_output(self, output: bytes) -> PackageShowInfo:
+        try:
+            parser = BytesParser().parsebytes(output)
+            fields = {"Name": "name",
+                      "Version": "version",
+                      "Location": "location",
+                      "Requires": "requires",
+                      "Required-by": "required_by",
+                      "Installer": "installer",
+                      "Metadata-Version": "metadata_version",
+                      "Classifiers": "classifiers",
+                      "Summary": "summary",
+                      "Home-page": "homepage",
+                      "Author": "author",
+                      "Author-email": "author_email",
+                      "License": "license",
+                      "Entry-points": "entry_points",
+                      "Files": "files"}
+            init_data = {}
+            for key in parser.keys():
+                data = parser.get(key)
 
-        return _PackageInfo(**init_data)
+                if key == "Requires" or key == "Required-by":
+                    data = data.split(", ")
+                elif key == "Classifiers" or key == "Entry-points" or key == "Files":
+                    data = data.splitlines()
+                    items = data[1:-1] if key == "Entry-points" else data[1:]
+                    data = [item.strip() for item in items]
+                init_data[fields[key]] = data
+
+            return PackageShowInfo(**init_data)
+
+        except (KeyError, TypeError) as e:
+            raise PipMalformedOutputError("Error parsing 'pip show' output. Check installed pip version.") from e
+        except Exception as e:
+            raise PipUnexpectedError("An unexpected error occurred while parsing 'show' output.") from e
