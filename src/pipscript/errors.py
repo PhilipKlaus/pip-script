@@ -8,3 +8,7 @@ class PipUnexpectedError(PipScriptError):
 
 class PipMalformedOutputError(PipScriptError):
     pass
+
+
+class PipProcessError(PipScriptError):
+    pass
