@@ -2,7 +2,7 @@ import subprocess
 import sys
 from typing import Callable, Type
 
-from src.pipscript.errors import PipProcessError
+from pipscript.errors import PipProcessError
 
 
 def run_cmd(cmd, processor: Callable[[bytes], Type]):

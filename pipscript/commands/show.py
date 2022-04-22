@@ -2,15 +2,15 @@ from dataclasses import dataclass
 from email.parser import BytesParser
 from typing import List, Optional
 
-from src.pipscript.commands import Command
-from src.pipscript.errors import PipMalformedOutputError, PipUnexpectedError
+from pipscript.commands import Command
+from pipscript.errors import PipMalformedOutputError, PipUnexpectedError
 
 
 @dataclass
 class PackageShowInfo:
     """
     Package info gathered by the 'pip show' command
-    Source: https://github.com/pypa/pip/blob/main/src/pip/_internal/commands/show.py
+    Source: https://github.com/pypa/pip/blob/29ddc93ee8f33f4e1c7402a16b32bdf5b61c7369/src/pip/_internal/commands/show.py
     """
     name: str
     version: str

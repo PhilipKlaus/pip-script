@@ -1,10 +1,11 @@
 import json
 from dataclasses import dataclass
 from json import JSONDecodeError
+from pathlib import Path
 from typing import List, Optional
 
-from src.pipscript.commands import Command
-from src.pipscript.errors import PipMalformedOutputError, PipUnexpectedError
+from pipscript.commands import Command
+from pipscript.errors import PipMalformedOutputError, PipUnexpectedError
 
 
 @dataclass
@@ -14,10 +15,10 @@ class PackageListInfo:
     """
     name: str
     version: str
-    latest_version: Optional[str] = None
-    latest_filetype: Optional[str] = None
-    location: Optional[str] = None  # Gathered if '--verbose' specified
-    installer: Optional[str] = None  # Gathered if '--verbose' specified
+    latest_version: Optional[str] = None  # Only gathered if e.g. '--outdated' specified
+    latest_filetype: Optional[str] = None  # Only gathered if e.g. '--outdated' specified
+    location: Optional[str] = None  # Only gathered if '--verbose' specified
+    installer: Optional[str] = None  # Only gathered if '--verbose' specified
 
 
 class ListCmd(Command):
@@ -28,7 +29,7 @@ class ListCmd(Command):
     def run(self) -> PackageListInfo:
         return self._run()
 
-    def _process_output(self, output: bytes):
+    def _process_output(self, output: bytes) -> List[PackageListInfo]:
         try:
             pkgs = []
             for entry in json.loads(output):
@@ -60,7 +61,7 @@ class ListCmd(Command):
         self._args.append("--user")
         return self
 
-    def path(self, path: str):
+    def path(self, path: Path):
         self._args.append(f"--path {path}")
         return self
 

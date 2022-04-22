@@ -1,7 +1,7 @@
 import pytest
 
-import src.pipscript as pip
-from src.pipscript.errors import PipMalformedOutputError
+import pipscript as pip
+from pipscript.errors import PipMalformedOutputError
 from tests.asserts import assert_command_contains_args
 
 
