@@ -12,11 +12,10 @@ class InstallCmd(Command):
             package = package if type(package) == str else package.as_posix()
             self._args.append(package)
 
-    # Todo return type
-    def run(self):
+    def run(self) -> None:
         return self._run()
 
-    def _process_output(self, output: bytes):
+    def _process_output(self, output: bytes) -> None:
         return None
 
     def requirement(self, file_paths: List[Path]):
@@ -155,4 +154,3 @@ class InstallCmd(Command):
     def no_clean(self):
         self._args.append("--no-clean")
         return self
-

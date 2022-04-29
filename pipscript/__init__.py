@@ -11,3 +11,8 @@ def show(pkt: str):
 def install(pkt: str):
     from pipscript.commands.install import InstallCmd
     return InstallCmd(pkt)
+
+
+def freeze():
+    from pipscript.commands.freeze import FreezeCmd
+    return FreezeCmd()
