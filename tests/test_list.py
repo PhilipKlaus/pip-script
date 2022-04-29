@@ -29,7 +29,7 @@ def test_list_args():
     cmd = pip.list().outdated().uptodate().editable().local().user().path(Path("testpath")).pre().not_required(). \
         exclude_editable().include_editable().exclude(["testpkg1", "testpkg2"])
 
-    args = ["pip", "list", "--outdated", "--uptodate", "--editable", "--local", "--user", "--path testpath", "--pre",
+    args = ["-m", "pip", "list", "--outdated", "--uptodate", "--editable", "--local", "--user", "--path testpath", "--pre",
             "--not-required", "--exclude-editable", "--include-editable", "--exclude testpkg1", "--exclude testpkg2"]
     assert_command_contains_args(cmd, args)
 
