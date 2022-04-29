@@ -1,7 +1,7 @@
 # pip-script
 A Python package for executing pip (*Python Package Manager*) commands from within code.
 
-Supported pip verion: **>=21.3.1**
+Supported pip verion: **>=22.0.4**
 
 **pip-script** provides a wrapper for pip commands and their arguments. Internally, pip-script make use of the [subprocess](https://docs.python.org/3/library/subprocess.html) package to execute pip.
 The basic usage is as follows:
@@ -18,7 +18,11 @@ import pipscript as pip
 pip.list().include_editable().run()
 ```
 
+## Documentation
+Please refer to the official [pip documentation](https://pip.pypa.io/en/stable/). 
+
 ## Current status
 Currently, the following pip commands are wrapped:
 - *list*
 - *show*
+- *install*

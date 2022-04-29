@@ -1,12 +1,13 @@
+import sys
 from typing import List
 
-from src.pipscript._executor import run_cmd
+from pipscript._executor import run_cmd
 
 
 class Command:
 
     def __init__(self, command: List[str]):
-        self._args = ["pip"] + command
+        self._args = [sys.executable, "-m", "pip"] + command
 
     def __str__(self):
         return " ".join(self._args)

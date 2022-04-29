@@ -1,7 +1,9 @@
+from pathlib import Path
+
 import pytest
 
-import src.pipscript as pip
-from src.pipscript.errors import PipMalformedOutputError
+import pipscript as pip
+from pipscript.errors import PipMalformedOutputError
 from tests.asserts import assert_command_contains_args
 
 
@@ -24,10 +26,10 @@ def assert_packet_info_equals(info, name: str, vers: str, location: str, install
 
 
 def test_list_args():
-    cmd = pip.list().outdated().uptodate().editable().local().user().path("testpath").pre().not_required(). \
+    cmd = pip.list().outdated().uptodate().editable().local().user().path(Path("testpath")).pre().not_required(). \
         exclude_editable().include_editable().exclude(["testpkg1", "testpkg2"])
 
-    args = ["pip", "list", "--outdated", "--uptodate", "--editable", "--local", "--user", "--path testpath", "--pre",
+    args = ["-m", "pip", "list", "--outdated", "--uptodate", "--editable", "--local", "--user", "--path testpath", "--pre",
             "--not-required", "--exclude-editable", "--include-editable", "--exclude testpkg1", "--exclude testpkg2"]
     assert_command_contains_args(cmd, args)
 
