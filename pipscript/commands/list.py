@@ -1,3 +1,4 @@
+import dataclasses
 import json
 from dataclasses import dataclass
 from json import JSONDecodeError
@@ -8,7 +9,7 @@ from pipscript.commands import Command
 from pipscript.errors import PipMalformedOutputError, PipUnexpectedError
 
 
-@dataclass
+@dataclass(init=False)
 class PackageListInfo:
     """
     The package information gathered by the 'pip list' command.
@@ -19,6 +20,16 @@ class PackageListInfo:
     latest_filetype: Optional[str] = None  # Only gathered if e.g. '--outdated' specified
     location: Optional[str] = None  # Only gathered if '--verbose' specified
     installer: Optional[str] = None  # Only gathered if '--verbose' specified
+
+    def __init__(self, **kwargs):
+        """
+        Custom constructor to ignore additional fields (e.g. from future unsupported pip versions).
+        :param kwargs:  The fields to set.
+        """
+        names = set([f.name for f in dataclasses.fields(self)])
+        for k, v in kwargs.items():
+            if k in names:
+                setattr(self, k, v)
 
 
 class ListCmd(Command):
