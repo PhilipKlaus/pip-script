@@ -1,6 +1,5 @@
-import pytest
-
 import pipscript as pip
+import pytest
 from pipscript.errors import PipMalformedOutputError
 from tests.asserts import assert_command_contains_args
 
@@ -52,7 +51,7 @@ def assert_packet_info_equals(info):
 def test_show_args():
     cmd = pip.show("test").files()
 
-    args = ["-m", "pip", "show", "--files", "test"]
+    args = ["-m", "pip", "--disable-pip-version-check", "show", "--files", "test"]
     assert_command_contains_args(cmd, args)
 
 

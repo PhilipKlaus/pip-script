@@ -1,8 +1,7 @@
 from pathlib import Path
 
-import pytest
-
 import pipscript as pip
+import pytest
 from pipscript.errors import PipMalformedOutputError
 from tests.asserts import assert_command_contains_args
 
@@ -29,8 +28,9 @@ def test_list_args():
     cmd = pip.list().outdated().uptodate().editable().local().user().path(Path("testpath")).pre().not_required(). \
         exclude_editable().include_editable().exclude(["testpkg1", "testpkg2"])
 
-    args = ["-m", "pip", "list", "--outdated", "--uptodate", "--editable", "--local", "--user", "--path testpath", "--pre",
-            "--not-required", "--exclude-editable", "--include-editable", "--exclude testpkg1", "--exclude testpkg2"]
+    args = ["-m", "pip", "--disable-pip-version-check", "list", "--outdated", "--uptodate", "--editable", "--local",
+            "--user", "--path testpath", "--pre", "--not-required", "--exclude-editable", "--include-editable",
+            "--exclude testpkg1", "--exclude testpkg2"]
     assert_command_contains_args(cmd, args)
 
 

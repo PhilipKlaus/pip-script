@@ -7,7 +7,7 @@ from pipscript._executor import run_cmd
 class Command:
 
     def __init__(self, command: List[str]):
-        self._args = [sys.executable, "-m", "pip"] + command
+        self._args = [sys.executable, "-m", "pip", "--disable-pip-version-check"] + command
 
     def __str__(self):
         return " ".join(self._args)
